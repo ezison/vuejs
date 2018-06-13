@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="no-cache" http-equiv="Pragma">
+    <meta content="no-store" http-equiv="Cache-Control">
+    <meta content="no-cache" http-equiv="Cache-Control">
+    <meta content="Mon, 26 Jul 1997 05:00:00 GMT" http-equiv="Expires">
+    <meta content="width=device-width, initial-scale=1, minimum-scale = 1.0, maximum-scale = 1.0, user-scalable = no" name="viewport">
+
+    <title>Vuejs Flow Sample</title>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" type="text/javascript"></script>
+
+    <style type="text/css">
+
+        [v-cloak] {
+            display: none;
+        }
+    
+        .red {
+            background-color: red;
+        }
+        .blue {
+            background-color: blue;
+        }
+        .green {
+            background-color: green;
+        }
+        .yellow {
+            background-color: yellow;
+        }
+        .black {
+            background-color: black;
+        }
+
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity .5s;
+        }
+        .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+            opacity: 0;
+        }
+
+        .slide-fade-enter-active {
+            transition: all .3s ease;
+        }
+        .slide-fade-leave-active {
+            transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+        }
+        .slide-fade-enter, .slide-fade-leave-to
+            /* .slide-fade-leave-active below version 2.1.8 */ {
+            transform: translateX(10px);
+            opacity: 0;
+        }
+
+    </style>
+
+    <script type="text/javascript">
+
+
+        $(function() {
+
+            var contents = 
+            {
+              "visibleTest": false
+            , "foreachList": [
+                 {"foreachText1": "row1 text1", "foreachText2": "row1 text2"}
+               , {"foreachText1": "row2 text1", "foreachText2": "row2 text2"}
+               , {"foreachText1": "row3 text1", "foreachText2": "row3 text2"}
+              ]
+            , "foreachNestList": [
+                 {"foreachNestText1": "row1 text1", "foreachNestText2": "row1 text2"
+                 ,"nestList": [
+                         {"nestText1": "row1-1 nest1", "nestText2": "row1-1 nest2"}
+                       , {"nestText1": "row1-2 nest1", "nestText2": "row1-2 nest2"}
+                      ]
+                 }
+               , {"foreachNestText1": "row2 text1", "foreachNestText2": "row2 text2"
+                 ,"nestList": []
+                 }
+               , {"foreachNestText1": "row3 text1", "foreachNestText2": "row3 text2"
+                 ,"nestList": []
+                 }
+              ]
+            , "foreachListAnim": [
+                 {"id": "1", "foreachText1": "row1 text1", "foreachText2": "row1 text2"}
+               , {"id": "2", "foreachText1": "row2 text1", "foreachText2": "row2 text2"}
+               , {"id": "3", "foreachText1": "row3 text1", "foreachText2": "row3 text2"}
+              ]
+            };
+
+            var loadDataText = JSON.stringify(contents, null, "    ");
+
+            var foreachListAnimLastId = 3;
+            var _app = new Vue({
+                el: '#app',
+                data: {
+                "loadData": loadDataText,
+                "postData": null,
+                "contents": contents
+                },
+                methods: {
+                    onLoad: function() {
+                        var data = this.loadData;
+                        var dataObj = JSON.parse(data);
+                        this.contents = dataObj;
+                    },
+                    onPost: function() {
+                        var postDataText = JSON.stringify(this.contents, null, "    ");
+                        this.postData = postDataText;
+                    },
+                    addForeachRec: function() {
+                        this.contents.foreachList.push({"foreachText1": "", "foreachText2": ""});
+                    },
+                    delForeachRec: function(index) {
+                        this.contents.foreachList.splice(index, 1);
+                    },
+                    addForeachNestRec: function() {
+                        this.contents.foreachNestList.push({"foreachNestText1": "", "foreachNestText2": "","nestList": []});
+                    },
+                    delForeachNestRec: function(index) {
+                        this.contents.foreachNestList.splice(index, 1);
+                    },
+                    addForeachNest2Rec: function(rec) {
+                        rec.nestList.push({"nestText1": "", "nestText2": ""});
+                    },
+                    delForeachNest2Rec: function(rec, index) {
+                        rec.nestList.splice(index, 1);
+                    },
+                    addForeachAnimRec: function() {
+                        foreachListAnimLastId++;
+                        var rec = {"id": foreachListAnimLastId, "foreachText1": "", "foreachText2": ""};
+                        this.contents.foreachListAnim.push(rec);
+                    },
+                    delForeachAnimRec: function(index) {
+                        this.contents.foreachListAnim.splice(index, 1);
+                    }
+                }
+            });
+
+        });
+
+    </script>
+
+</head>
+<body>
+
+    <div id="app" class="container-fluid" v-cloak>
+
+        <div style="margin: 2em 2em">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Vue JS ロードデータ（Json）
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label">Json</label>
+                        <div class="col-xs-10">
+                            <textarea class="form-control" name="loadData" value="" rows="15" v-model="loadData">
+                            </textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-10 col-xs-offset-2">
+                            <br />
+                            <button id="loadDataButton" type="button" class="btn btn-primary" v-on:click="onLoad">Load Data ↓↓↓</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="form"
+                accept-charset="utf-8"
+                action=""
+                method="post"
+                class="form-horizontal"
+            >
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Vue JS サンプルフォーム
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label">if / elseバインディング</label>
+                            <div class="col-xs-10">
+                                <div class="form-control-static">
+                                    <input name="visibleTest" type="checkbox" value="visible" v-model="contents.visibleTest" />&nbsp;&nbsp;
+                                    <span v-if="contents.visibleTest">チェックされたら表示されます</span>
+                                    <span v-else>チェックされていなかったら表示されます</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label">if / elseバインディング with アニメーション </label>
+                            <div class="col-xs-10">
+                                <div class="form-control-static">
+                                    <input name="visibleTest" type="checkbox" value="visible" v-model="contents.visibleTest" />&nbsp;&nbsp;
+                                    <transition name="fade">
+                                        <span v-if="contents.visibleTest">チェックされたら表示されます</span>
+                                    </transition>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-10 col-xs-offset-2">
+                            ↑↑↑ if / else アニメーションは  <a href="https://jp.vuejs.org/v2/guide/transitions.html#%E5%8D%98%E4%B8%80%E8%A6%81%E7%B4%A0-%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E3%81%AE%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B8%E3%82%B7%E3%83%A7%E3%83%B3">単一コンポーネント Transition参照</a>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label">foreachバインディング</label>
+                            <div class="col-xs-10">
+                                <div style="margin-bottom: .5em;">
+                                    <button type="button" id="foreachAdd" class="btn btn-default"
+                                        v-on:click="addForeachRec">追加</button>
+                                </div>
+                                <div 
+                                    v-for="(rec, index) in contents.foreachList"
+                                >
+                                    <div style="margin-bottom: .5em;" class="foreachRecord">
+                                        <input name="foreachText1" type="text" value="" class="form-control" style="display: inline-block; width: 40%;" 
+                                            v-model="rec.foreachText1" />
+                                        <input name="foreachText2" type="text" value="" class="form-control" style="display: inline-block; width: 40%;"
+                                            v-model="rec.foreachText2"  />
+                                        <button type="button" class="foreachDel btn btn-default"
+                                            v-on:click="delForeachRec(index)">削除</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label">foreachバインディング（Nest）</label>
+                            <div class="col-xs-10">
+                                <div style="margin-bottom: .5em;">
+                                    <button type="button" id="foreachNestAdd" class="btn btn-default"
+                                        v-on:click="addForeachNestRec">追加</button>
+                                </div>
+                                <div v-for="(rec, index) in contents.foreachNestList">
+
+                                    <div class="foreachNestRecord"
+                                        style="margin-bottom: .5em;">
+                                        
+                                        <input name="foreachNestText1" type="text" value="" class="form-control" style="display: inline-block; width: 40%;" 
+                                            v-model="rec.foreachNestText1" />
+                                        <input name="foreachNestText2" type="text" value="" class="form-control" style="display: inline-block; width: 40%;"
+                                            v-model="rec.foreachNestText2" />
+                                        <button type="button" class="foreachNestDel btn btn-default"
+                                            v-on:click="delForeachNestRec(index)">削除</button>
+
+                                        <div style="margin: .5em; margin-left: 2em;">
+                                            <button type="button" id="foreachNestNestAdd" class="btn btn-default"
+                                                v-on:click="addForeachNest2Rec(rec)">追加</button>
+                                        </div>
+
+                                        <div v-for="(recNest, index2) in rec.nestList">
+
+                                            <div class="foreachNestNestRecord"
+                                                style="margin-bottom: .5em; margin-left: 2em;">
+
+                                                <input name="nestText1" type="text" value="" class="form-control" style="display: inline-block; width: 20%;" 
+                                                    v-model="recNest.nestText1" />
+                                                <input name="nestText2" type="text" value="" class="form-control" style="display: inline-block; width: 20%;"
+                                                    v-model="recNest.nestText2" />
+                                                <button type="button" class="foreachNestNestDel btn btn-default"
+                                                    v-on:click="delForeachNest2Rec(rec, index2)">削除</button>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <hr />
+                                        
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label">foreach バインディング with アニメーション</label>
+                            <div class="col-xs-10">
+                                <div style="margin-bottom: .5em;">
+                                    <button type="button" id="foreachAdd" class="btn btn-default"
+                                        v-on:click="addForeachAnimRec">追加</button>
+                                </div>
+                                <transition-group name="slide-fade" tag="div">
+                                <div 
+                                    v-for="(rec, index) in contents.foreachListAnim"
+                                    v-bind:key="rec.id"
+                                >
+                                    <div style="margin-bottom: .5em;" class="foreachRecord">
+                                        <input name="foreachText1" type="text" value="" class="form-control" style="display: inline-block; width: 40%;" 
+                                            v-model="rec.foreachText1" />
+                                        <button type="button" class="foreachDel btn btn-default"
+                                            v-on:click="delForeachAnimRec(index)">削除</button>
+                                    </div>
+                                </div>
+                                </transition-group>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-10 col-xs-offset-2">
+                            ↑↑↑ foreach アニメーションは  <a href="https://jp.vuejs.org/v2/guide/transitions.html#%E3%83%AA%E3%82%B9%E3%83%88%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B8%E3%82%B7%E3%83%A7%E3%83%B3">リストTransition参照</a>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-xs-10 col-xs-offset-2">
+                                <button id="submit" type="button" class="btn btn-primary" v-on:click="onPost">Submit Data ↓↓↓</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-10 col-xs-offset-2">
+                                <p class="form-control" name="submitData" rows="5">{{postData}}</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
